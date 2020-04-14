@@ -214,7 +214,10 @@ const findDecoWithRegex = (regex: RegExp, contentBlock: any, callback: any) => {
   }
 };
 
-const useEditorState = (props: IMUIRichTextEditorProps) => {
+const useEditorState = (
+  props: IMUIRichTextEditorProps,
+  editorState: EditorState
+) => {
   const decorators: DraftDecorator[] = [
     {
       strategy: findLinkEntities,
@@ -245,7 +248,9 @@ const MUIRichTextEditor: RefForwardingComponent<
   const [state, setState] = useState<IMUIRichTextEditorState>({});
   const [focus, setFocus] = useState(false);
 
-  const [editorState, setEditorState] = useState(() => useEditorState(props));
+  const [editorState, setEditorState] = useState(() =>
+    useEditorState(props, EditorState.createEmpty())
+  );
   const [customRenderers, setCustomRenderers] = useState<TCustomRenderers>({
     style: undefined,
     block: undefined,
@@ -278,7 +283,7 @@ const MUIRichTextEditor: RefForwardingComponent<
   }));
 
   useEffect(() => {
-    const editorState = useEditorState(props);
+    const newEditorState = useEditorState(props, editorState);
     const customBlockMap: any = {};
     const customStyleMap = JSON.parse(JSON.stringify(styleRenderMap));
     if (props.customControls) {
@@ -300,12 +305,12 @@ const MUIRichTextEditor: RefForwardingComponent<
         Immutable.Map(customBlockMap)
       ),
     });
-    setEditorState(editorState);
+    setEditorState(newEditorState);
     toggleMouseUpListener(true);
     return () => {
       toggleMouseUpListener();
     };
-  }, [props.value]);
+  }, [props.value, editorState]);
 
   useEffect(() => {
     editorStateRef.current = editorState;
