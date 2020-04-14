@@ -144,6 +144,7 @@ interface IMUIRichTextEditorProps extends WithStyles<typeof styles> {
   maxLength?: number;
   onSave?: (data: string) => void;
   onChange?: (state: EditorState) => void;
+  editorState?: EditorState;
 }
 
 type IMUIRichTextEditorState = {
@@ -232,7 +233,7 @@ const useEditorState = (props: IMUIRichTextEditorProps) => {
   }
   const decorator = new CompositeDecorator(decorators);
   return props.value
-    ? EditorState.createWithContent(props.value)
+    ? EditorState.push(editorState, props.value, "insert-characters")
     : EditorState.createEmpty(decorator);
 };
 
@@ -870,7 +871,7 @@ const MUIRichTextEditor: RefForwardingComponent<
         {renderToolbar ? (
           <Toolbar
             id={editorId}
-            editorState={editorState}
+            editorState={props.editorState}
             onClick={handleToolbarClick}
             controls={controls}
             customControls={customControls}
