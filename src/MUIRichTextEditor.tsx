@@ -876,7 +876,7 @@ const MUIRichTextEditor: RefForwardingComponent<
         {renderToolbar ? (
           <Toolbar
             id={editorId}
-            editorState={props.editorState}
+            editorState={editorState}
             onClick={handleToolbarClick}
             controls={controls}
             customControls={customControls}
